@@ -106,19 +106,6 @@ sgi-system/
     └── migrations/             # Scripts SQL
 ```
 
-## 📝 Próximos Pasos
-
-- [ ] Integrar API de tasas de cambio en tiempo real
-- [ ] Implementar CRUD completo de transacciones
-- [ ] Agregar gráficos y visualizaciones avanzadas
-- [ ] Módulo de reportes exportables (PDF/Excel)
-- [ ] Notificaciones en tiempo real
-- [ ] App móvil (React Native)
-
-## 🤝 Contribución
-
-Este es un proyecto privado. Para contribuir, contacta al administrador del sistema.
-
 ## 📄 Licencia
 
 Este proyecto está bajo la Licencia MIT - mira el archivo [LICENSE](LICENSE) para detalles.
