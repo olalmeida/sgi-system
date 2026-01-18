@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
+import { useAuth } from '../contexts/AuthContext';
 import type { LogisticsProcess } from '../types/database';
 
 export function useLogistics() {
@@ -7,9 +8,13 @@ export function useLogistics() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const { user } = useAuth();
+
   useEffect(() => {
-    fetchProcesses();
-  }, []);
+    if (user) {
+      fetchProcesses();
+    }
+  }, [user?.id]);
 
   async function fetchProcesses() {
     try {

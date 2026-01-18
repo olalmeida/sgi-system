@@ -33,6 +33,12 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
 
     useEffect(() => {
         localStorage.setItem('userSettings', JSON.stringify(settings));
+        // Also ensure i18next is synced
+        import('../i18n/config').then(({ default: i18n }) => {
+            if (i18n.language !== settings.language) {
+                i18n.changeLanguage(settings.language);
+            }
+        });
     }, [settings]);
 
     const updateSettings = (newSettings: Partial<UserSettings>) => {

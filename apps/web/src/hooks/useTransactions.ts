@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
+import { useAuth } from '../contexts/AuthContext';
 import type { Transaction, TransactionWithDetails } from '../types/database';
 
 export function useTransactions(limit = 10, autoRefresh = false) {
@@ -7,18 +8,22 @@ export function useTransactions(limit = 10, autoRefresh = false) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const { user } = useAuth();
+
   useEffect(() => {
-    fetchTransactions();
+    if (user) {
+      fetchTransactions();
+    }
 
     // Auto-refresh every 30 seconds if enabled
-    if (autoRefresh) {
+    if (autoRefresh && user) {
       const interval = setInterval(() => {
         fetchTransactions();
       }, 30000); // 30 seconds
 
       return () => clearInterval(interval);
     }
-  }, [limit, autoRefresh]);
+  }, [limit, autoRefresh, user?.id]);
 
   async function fetchTransactions() {
     try {

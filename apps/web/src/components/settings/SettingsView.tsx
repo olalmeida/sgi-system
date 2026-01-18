@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Settings as SettingsIcon, Globe, DollarSign, Calendar, Bell, User, Database, Trash2, Save } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { supabase } from '../../lib/supabase';
 import { useSettings } from '../../contexts/SettingsContext';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -37,9 +38,48 @@ export function SettingsView() {
         toast.success(t('settings.saved'));
     };
 
-    const handleExportData = () => {
-        toast.success(t('settings.exporting'));
-        // TODO: Implement data export
+    const handleExportData = async () => {
+        try {
+            toast.success(t('settings.exporting'));
+
+            // Fetch all user data
+            const [
+                { data: transactions },
+                { data: budgets },
+                { data: logistics }
+            ] = await Promise.all([
+                supabase.from('transactions').select('*'),
+                supabase.from('budgets').select('*'),
+                supabase.from('logistics_processes').select('*')
+            ]);
+
+            const exportData = {
+                metadata: {
+                    user: user?.email,
+                    exportDate: new Date().toISOString(),
+                    system: 'Gestio System'
+                },
+                transactions: transactions || [],
+                budgets: budgets || [],
+                logistics: logistics || []
+            };
+
+            // Create blob and download
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `gestio_export_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            toast.success(t('common.success'));
+        } catch (error) {
+            console.error('Export error:', error);
+            toast.error('Error exporting data');
+        }
     };
 
     const handleClearCache = () => {

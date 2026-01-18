@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
+import { useAuth } from '../contexts/AuthContext';
 
 interface DashboardStats {
   totalLiquidity: number;
@@ -18,9 +19,13 @@ export function useDashboardStats() {
     loading: true,
   });
 
+  const { user } = useAuth();
+
   useEffect(() => {
-    fetchStats();
-  }, []);
+    if (user) {
+      fetchStats();
+    }
+  }, [user?.id]);
 
   async function fetchStats() {
     try {

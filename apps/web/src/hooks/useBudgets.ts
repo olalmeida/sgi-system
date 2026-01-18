@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
+import { useAuth } from '../contexts/AuthContext';
 import type { Budget, BudgetWithCurrency } from '../types/database';
 
 export function useBudgets() {
@@ -7,9 +8,13 @@ export function useBudgets() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const { user } = useAuth();
+
   useEffect(() => {
-    fetchBudgets();
-  }, []);
+    if (user) {
+      fetchBudgets();
+    }
+  }, [user?.id]);
 
   async function fetchBudgets() {
     try {

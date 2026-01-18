@@ -14,7 +14,6 @@ import {
 import { Toaster } from 'react-hot-toast';
 import './index.css';
 import { useAuth } from './contexts/AuthContext';
-import { SettingsProvider } from './contexts/SettingsContext';
 import { AuthPage } from './components/auth/AuthPage';
 import { useTransactions } from './hooks/useTransactions';
 import { useDashboardStats } from './hooks/useDashboardStats';
@@ -52,7 +51,7 @@ function App() {
   }
 
   return (
-    <SettingsProvider>
+    <>
       <Toaster position="top-right" />
       <div className="app-container">
         {/* Sidebar */}
@@ -229,7 +228,7 @@ function App() {
           {activeTab === 'settings' && <SettingsView />}
         </main>
       </div>
-    </SettingsProvider>
+    </>
   );
 }
 
