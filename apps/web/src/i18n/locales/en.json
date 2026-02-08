@@ -30,6 +30,7 @@
     "finance": "Finance",
     "budgets": "Budgets",
     "logistics": "Logistics",
+    "reports": "Reports",
     "settings": "Settings",
     "logout": "Logout"
   },
@@ -71,7 +72,9 @@
     "activeCount": "Active",
     "pendingCount": "pending",
     "viewAll": "View All",
-    "noDescription": "No description"
+    "noDescription": "No description",
+    "exportPDF": "Download PDF",
+    "exportExcel": "Download Excel"
   },
   "finance": {
     "title": "Financial Management",
@@ -200,5 +203,23 @@
     "exporting": "Exporting data...",
     "cacheCleared": "Cache cleared",
     "notImplemented": "Feature not implemented yet"
+  },
+  "reports": {
+    "title": "Analytics & Reports",
+    "analytics": "Analytics",
+    "export": "Export",
+    "incomeVsExpense": "Income vs Expenses",
+    "budgetDistribution": "Budget Distribution",
+    "logisticsDistribution": "Logistics Status",
+    "financialSummary": "Financial Summary",
+    "transactionExport": "Export Transactions",
+    "generateReport": "Generate Report",
+    "dateRange": "Date Range",
+    "last7Days": "Last 7 Days",
+    "last30Days": "Last 30 Days",
+    "allTime": "All Time",
+    "viewAnalytics": "View Statistics",
+    "downloadPdf": "Download PDF",
+    "downloadExcel": "Download Excel"
   }
 }

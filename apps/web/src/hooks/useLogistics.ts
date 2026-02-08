@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { useAuth } from '../contexts/AuthContext';
 import type { LogisticsProcess } from '../types/database';
+import { useAuth } from './useAuth';
 
 export function useLogistics() {
   const [processes, setProcesses] = useState<LogisticsProcess[]>([]);
@@ -10,13 +10,8 @@ export function useLogistics() {
 
   const { user } = useAuth();
 
-  useEffect(() => {
-    if (user) {
-      fetchProcesses();
-    }
-  }, [user?.id]);
-
-  async function fetchProcesses() {
+  const fetchProcesses = useCallback(async () => {
+    if (!user) return;
     try {
       setLoading(true);
       const { data, error } = await supabase
@@ -26,17 +21,25 @@ export function useLogistics() {
 
       if (error) throw error;
       setProcesses(data || []);
+      setLoading(false);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error fetching logistics processes');
-    } finally {
+      setError(err instanceof Error ? err.message : 'Error fetching processes');
       setLoading(false);
     }
-  }
+  }, [user]);
 
-  async function createProcess(process: Omit<LogisticsProcess, 'id' | 'created_at' | 'updated_at' | 'created_by'>) {
+  useEffect(() => {
+    fetchProcesses();
+  }, [fetchProcesses]);
+
+  async function createProcess(
+    process: Omit<LogisticsProcess, 'id' | 'created_at' | 'updated_at' | 'created_by'>
+  ) {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
       const { data, error } = await supabase
         .from('logistics_processes')
         .insert([{ ...process, created_by: user?.id }])
@@ -44,13 +47,13 @@ export function useLogistics() {
         .single();
 
       if (error) throw error;
-      
+
       await fetchProcesses();
       return { data, error: null };
     } catch (err) {
-      return { 
-        data: null, 
-        error: err instanceof Error ? err.message : 'Error creating process' 
+      return {
+        data: null,
+        error: err instanceof Error ? err.message : 'Error creating process',
       };
     }
   }
@@ -65,31 +68,28 @@ export function useLogistics() {
         .single();
 
       if (error) throw error;
-      
+
       await fetchProcesses();
       return { data, error: null };
     } catch (err) {
-      return { 
-        data: null, 
-        error: err instanceof Error ? err.message : 'Error updating process' 
+      return {
+        data: null,
+        error: err instanceof Error ? err.message : 'Error updating process',
       };
     }
   }
 
   async function deleteProcess(id: string) {
     try {
-      const { error } = await supabase
-        .from('logistics_processes')
-        .delete()
-        .eq('id', id);
+      const { error } = await supabase.from('logistics_processes').delete().eq('id', id);
 
       if (error) throw error;
-      
+
       await fetchProcesses();
       return { error: null };
     } catch (err) {
-      return { 
-        error: err instanceof Error ? err.message : 'Error deleting process' 
+      return {
+        error: err instanceof Error ? err.message : 'Error deleting process',
       };
     }
   }

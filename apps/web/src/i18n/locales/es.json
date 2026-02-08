@@ -30,6 +30,7 @@
     "finance": "Finanzas",
     "budgets": "Presupuestos",
     "logistics": "Logística",
+    "reports": "Reportes",
     "settings": "Configuración",
     "logout": "Cerrar Sesión"
   },
@@ -71,7 +72,9 @@
     "activeCount": "Activos",
     "pendingCount": "pendientes",
     "viewAll": "Ver Todo",
-    "noDescription": "Sin descripción"
+    "noDescription": "Sin descripción",
+    "exportPDF": "Descargar PDF",
+    "exportExcel": "Descargar Excel"
   },
   "finance": {
     "title": "Gestión Financiera",
@@ -200,5 +203,23 @@
     "exporting": "Exportando datos...",
     "cacheCleared": "Caché limpiado",
     "notImplemented": "Función no implementada aún"
+  },
+  "reports": {
+    "title": "Análisis y Reportes",
+    "analytics": "Análisis",
+    "export": "Exportar",
+    "incomeVsExpense": "Ingresos vs Egresos",
+    "budgetDistribution": "Distribución de Presupuestos",
+    "logisticsDistribution": "Estado de Logística",
+    "financialSummary": "Resumen Financiero",
+    "transactionExport": "Exportar Transacciones",
+    "generateReport": "Generar Reporte",
+    "dateRange": "Rango de Fechas",
+    "last7Days": "Últimos 7 días",
+    "last30Days": "Últimos 30 días",
+    "allTime": "Todo el tiempo",
+    "viewAnalytics": "Ver Estadísticas",
+    "downloadPdf": "Descargar PDF",
+    "downloadExcel": "Descargar Excel"
   }
 }

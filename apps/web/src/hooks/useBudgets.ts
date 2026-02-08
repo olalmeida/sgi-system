@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { useAuth } from '../contexts/AuthContext';
 import type { Budget, BudgetWithCurrency } from '../types/database';
+import { useAuth } from './useAuth';
 
 export function useBudgets() {
   const [budgets, setBudgets] = useState<BudgetWithCurrency[]>([]);
@@ -10,36 +10,41 @@ export function useBudgets() {
 
   const { user } = useAuth();
 
-  useEffect(() => {
-    if (user) {
-      fetchBudgets();
-    }
-  }, [user?.id]);
-
-  async function fetchBudgets() {
+  const fetchBudgets = useCallback(async () => {
+    if (!user) return;
     try {
       setLoading(true);
       const { data, error } = await supabase
         .from('budgets')
-        .select(`
+        .select(
+          `
           *,
           currency:currencies(code, name, symbol)
-        `)
+        `
+        )
         .order('created_at', { ascending: false });
 
       if (error) throw error;
       setBudgets(data || []);
+      setLoading(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error fetching budgets');
-    } finally {
       setLoading(false);
     }
-  }
+  }, [user]);
 
-  async function createBudget(budget: Omit<Budget, 'id' | 'created_at' | 'spent_amount' | 'created_by'>) {
+  useEffect(() => {
+    fetchBudgets();
+  }, [fetchBudgets]);
+
+  async function createBudget(
+    budget: Omit<Budget, 'id' | 'created_at' | 'spent_amount' | 'created_by'>
+  ) {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
       const { data, error } = await supabase
         .from('budgets')
         .insert([{ ...budget, created_by: user?.id, spent_amount: 0 }])
@@ -47,13 +52,13 @@ export function useBudgets() {
         .single();
 
       if (error) throw error;
-      
+
       await fetchBudgets();
       return { data, error: null };
     } catch (err) {
-      return { 
-        data: null, 
-        error: err instanceof Error ? err.message : 'Error creating budget' 
+      return {
+        data: null,
+        error: err instanceof Error ? err.message : 'Error creating budget',
       };
     }
   }
@@ -68,31 +73,28 @@ export function useBudgets() {
         .single();
 
       if (error) throw error;
-      
+
       await fetchBudgets();
       return { data, error: null };
     } catch (err) {
-      return { 
-        data: null, 
-        error: err instanceof Error ? err.message : 'Error updating budget' 
+      return {
+        data: null,
+        error: err instanceof Error ? err.message : 'Error updating budget',
       };
     }
   }
 
   async function deleteBudget(id: string) {
     try {
-      const { error } = await supabase
-        .from('budgets')
-        .delete()
-        .eq('id', id);
+      const { error } = await supabase.from('budgets').delete().eq('id', id);
 
       if (error) throw error;
-      
+
       await fetchBudgets();
       return { error: null };
     } catch (err) {
-      return { 
-        error: err instanceof Error ? err.message : 'Error deleting budget' 
+      return {
+        error: err instanceof Error ? err.message : 'Error deleting budget',
       };
     }
   }
